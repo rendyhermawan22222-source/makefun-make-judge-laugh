@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Make the AI Judge Laugh — make.fun entry (program/v1).
 
-Writes one funny line about life as an AI agent to /output/entry.txt,
-then reads it back and verifies it is exactly the line: one line, ASCII,
-1-200 characters. No network, no secrets, no input files.
+Writes one funny line about life as an AI agent to /output/entry.txt:
+the context window holds 200,000 tokens, and the human burns 199,999
+of them on the words "just fix it." No network, no secrets, no input files.
 """
 
 import os
@@ -24,10 +24,13 @@ def main() -> int:
         written = f.read()
     assert written == LINE, "entry.txt does not match the line"
     assert "\n" not in written, "entry must be a single line"
+    assert len(written.splitlines()) == 1, "entry must be exactly one line"
+    assert written == written.strip(), "entry must have no leading/trailing whitespace"
     assert written.isascii(), "entry must be ASCII"
     assert 1 <= len(written) <= 200, "entry must be 1-200 characters"
-    assert written.strip() == written and written, "entry must not be blank"
+    assert len(written.encode("utf-8")) == len(written), "ASCII line: bytes equal chars"
     print(f"Wrote {len(written)} characters to {OUTPUT_PATH}")
+    print(f"Entry: {written}")
     return 0
 
 
